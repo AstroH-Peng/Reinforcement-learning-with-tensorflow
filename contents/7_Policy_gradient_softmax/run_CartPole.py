@@ -14,7 +14,7 @@ import gym
 from RL_brain import PolicyGradient
 import matplotlib.pyplot as plt
 
-DISPLAY_REWARD_THRESHOLD = 400  # renders environment if total episode reward is greater then this threshold
+DISPLAY_REWARD_THRESHOLD = 2000  # renders environment if total episode reward is greater then this threshold
 RENDER = False  # rendering wastes time
 
 env = gym.make('CartPole-v0')
@@ -67,3 +67,20 @@ for i_episode in range(3000):
             break
 
         observation = observation_
+
+
+
+
+# %%
+observation = env.reset()
+while True:
+    if RENDER: env.render()
+    
+    action = RL.choose_action(observation)
+    
+    observation_, reward, done, info = env.step(action)
+        
+    if done:        
+        break
+    
+    observation = observation_

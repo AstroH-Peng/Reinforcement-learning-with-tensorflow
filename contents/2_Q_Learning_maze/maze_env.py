@@ -22,20 +22,20 @@ else:
 
 
 UNIT = 40   # pixels
-MAZE_H = 4  # grid height
-MAZE_W = 4  # grid width
+MAZE_H = 5  # grid height
+MAZE_W = 5  # grid width
 
 
 class Maze(tk.Tk, object):
-    def __init__(self):
+    def __init__(self, oval_location=2):
         super(Maze, self).__init__()
         self.action_space = ['u', 'd', 'l', 'r']
         self.n_actions = len(self.action_space)
         self.title('maze')
         self.geometry('{0}x{1}'.format(MAZE_H * UNIT, MAZE_H * UNIT))
-        self._build_maze()
+        self._build_maze(oval_location)
 
-    def _build_maze(self):
+    def _build_maze(self, oval_location):
         self.canvas = tk.Canvas(self, bg='white',
                            height=MAZE_H * UNIT,
                            width=MAZE_W * UNIT)
@@ -50,6 +50,7 @@ class Maze(tk.Tk, object):
 
         # create origin
         origin = np.array([20, 20])
+        self.origin = origin
 
         # hell
         hell1_center = origin + np.array([UNIT * 2, UNIT])
@@ -65,7 +66,7 @@ class Maze(tk.Tk, object):
             fill='black')
 
         # create oval
-        oval_center = origin + UNIT * 2
+        oval_center = origin + UNIT * oval_location
         self.oval = self.canvas.create_oval(
             oval_center[0] - 15, oval_center[1] - 15,
             oval_center[0] + 15, oval_center[1] + 15,
@@ -132,17 +133,20 @@ class Maze(tk.Tk, object):
         self.update()
 
 
-def update():
-    for t in range(10):
-        s = env.reset()
-        while True:
-            env.render()
-            a = 1
-            s, r, done = env.step(a)
-            if done:
-                break
-
-if __name__ == '__main__':
-    env = Maze()
-    env.after(100, update)
-    env.mainloop()
+# Hao: this part of code is only used to test Maze
+# =============================================================================
+# def update():
+#     for t in range(10):
+#         s = env.reset()
+#         while True:
+#             env.render()
+#             a = 1
+#             s, r, done = env.step(a)
+#             if done:
+#                 break
+# 
+# if __name__ == '__main__':
+#     env = Maze()
+#     env.after(100, update)
+#     env.mainloop()
+# =============================================================================

@@ -20,8 +20,8 @@ else:
     import tkinter as tk
 
 UNIT = 40   # pixels
-MAZE_H = 4  # grid height
-MAZE_W = 4  # grid width
+MAZE_H = 5  # grid height
+MAZE_W = 5  # grid width
 
 
 class Maze(tk.Tk, object):
@@ -57,11 +57,11 @@ class Maze(tk.Tk, object):
             hell1_center[0] + 15, hell1_center[1] + 15,
             fill='black')
         # hell
-        # hell2_center = origin + np.array([UNIT, UNIT * 2])
-        # self.hell2 = self.canvas.create_rectangle(
-        #     hell2_center[0] - 15, hell2_center[1] - 15,
-        #     hell2_center[0] + 15, hell2_center[1] + 15,
-        #     fill='black')
+        hell2_center = origin + np.array([UNIT, UNIT * 2])
+        self.hell2 = self.canvas.create_rectangle(
+            hell2_center[0] - 15, hell2_center[1] - 15,
+            hell2_center[0] + 15, hell2_center[1] + 15,
+            fill='black')
 
         # create oval
         oval_center = origin + UNIT * 2
@@ -115,7 +115,7 @@ class Maze(tk.Tk, object):
         if next_coords == self.canvas.coords(self.oval):
             reward = 1
             done = True
-        elif next_coords in [self.canvas.coords(self.hell1)]:
+        elif next_coords in [self.canvas.coords(self.hell1), self.canvas.coords(self.hell2)]:
             reward = -1
             done = True
         else:

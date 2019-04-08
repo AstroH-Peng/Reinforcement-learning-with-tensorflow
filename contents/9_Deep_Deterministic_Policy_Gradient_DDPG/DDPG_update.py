@@ -18,7 +18,7 @@ import time
 
 #####################  hyper parameters  ####################
 
-MAX_EPISODES = 200
+MAX_EPISODES = 100
 MAX_EP_STEPS = 200
 LR_A = 0.001    # learning rate for actor
 LR_C = 0.002    # learning rate for critic
@@ -146,6 +146,21 @@ for i in range(MAX_EPISODES):
         ep_reward += r
         if j == MAX_EP_STEPS-1:
             print('Episode:', i, ' Reward: %i' % int(ep_reward), 'Explore: %.2f' % var, )
-            # if ep_reward > -300:RENDER = True
+            if ep_reward > -300:RENDER = True
             break
 print('Running time: ', time.time() - t1)
+
+
+# %%
+s = env.reset()
+while True:
+
+    env.render()
+
+    # Add exploration noise
+    a = ddpg.choose_action(s)
+    s_, r, done, info = env.step(a)
+
+    s = s_
+    
+    print('# control:', a)

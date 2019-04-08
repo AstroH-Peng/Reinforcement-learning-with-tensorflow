@@ -1,10 +1,12 @@
 from maze_env import Maze
 from RL_brain import DeepQNetwork
 
+import time
 
 def run_maze():
     step = 0
     for episode in range(300):
+        print('#episode ', episode)
         # initial observation
         observation = env.reset()
 
@@ -50,3 +52,38 @@ if __name__ == "__main__":
     env.after(100, run_maze)
     env.mainloop()
     RL.plot_cost()
+    
+    # demonstrate final games until terminate manually
+    print('# unstopping demonstration starts...')
+    env = Maze()
+    while True:
+        # initial observation
+        observation = env.reset()
+        
+        step = 0
+        while True:
+            # fresh env
+            env.render()
+    
+            # RL choose action based on observation
+            action = RL.choose_action(observation)
+    
+            # RL take action and get next observation and reward
+            observation_, reward, done = env.step(action)
+            time.sleep(0.1)
+    
+            # swap observation
+            observation = observation_
+    
+            # break while loop when end of this episode
+            if done:
+                env.render()
+                if reward == 1:
+                    print('# get oval in', step, 'steps!')
+                elif reward == -1:
+                    print('# die after', step, 'steps...')
+                break
+            
+            step += 1
+        
+        time.sleep(2)

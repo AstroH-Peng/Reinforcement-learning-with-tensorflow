@@ -146,7 +146,24 @@ for i in range(MAX_EPISODES):
         ep_reward += r
         if j == MAX_EP_STEPS-1:
             print('Episode:', i, ' Reward: %i' % int(ep_reward), 'Explore: %.2f' % var, )
-            # if ep_reward > -300:RENDER = True
+            if ep_reward > -300:RENDER = True
             break
 
 print('Running time: ', time.time() - t1)
+
+
+
+# %%
+s = env.reset()
+while True:
+
+    env.render()
+
+    # Add exploration noise
+    a = ddpg.choose_action(s)
+    a += np.random.uniform(-0.5,0.5)
+    s_, r, done, info = env.step(a)
+
+    s = s_
+    
+#    print('# control:', a)

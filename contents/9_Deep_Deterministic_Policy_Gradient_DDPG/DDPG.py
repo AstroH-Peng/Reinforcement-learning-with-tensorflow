@@ -265,3 +265,17 @@ for i in range(MAX_EPISODES):
             break
 
 print('Running time: ', time.time()-t1)
+
+
+
+# %%
+s = env.reset()
+while True:
+
+    env.render()
+
+    # Add exploration noise
+    a = actor.choose_action(s)
+    s_, r, done, info = env.step(a)
+
+    s = s_

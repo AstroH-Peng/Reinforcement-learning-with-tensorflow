@@ -154,8 +154,8 @@ for i_episode in range(MAX_EPISODE):
     t = 0
     ep_rs = []
     while True:
-        # if RENDER:
-        env.render()
+#        if RENDER:
+#            env.render()
         a = actor.choose_action(s)
 
         s_, r, done, info = env.step(a)
@@ -177,3 +177,22 @@ for i_episode in range(MAX_EPISODE):
             print("episode:", i_episode, "  reward:", int(running_reward))
             break
 
+# %%
+while True:
+    s = env.reset()
+    t = 0
+    while True:
+        if RENDER:
+            env.render()
+        a = actor.choose_action(s)
+
+        s_, r, done, info = env.step(a)
+        r /= 10
+
+        s = s_
+        t += 1
+
+        if t > MAX_EP_STEPS:
+            break
+        
+    print('# last', t, 'steps.')

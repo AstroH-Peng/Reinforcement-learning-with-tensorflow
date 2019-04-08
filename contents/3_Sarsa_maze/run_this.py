@@ -13,6 +13,7 @@ from RL_brain import SarsaTable
 
 def update():
     for episode in range(100):
+        print('# now at ', episode)
         # initial observation
         observation = env.reset()
 

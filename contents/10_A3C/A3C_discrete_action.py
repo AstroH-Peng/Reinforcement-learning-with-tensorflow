@@ -197,3 +197,21 @@ if __name__ == "__main__":
     plt.xlabel('step')
     plt.ylabel('Total moving reward')
     plt.show()
+
+
+# %%
+s = env.reset()
+one = workers[1].AC
+one.pull_global()
+while True:
+
+    env.render()
+
+    # Add exploration noise
+    a = one.choose_action(s)
+#    a += np.random.uniform(-0.5,0.5)
+    s_, r, done, info = env.step(a)
+
+    s = s_
+    
+    print('# control:', a)

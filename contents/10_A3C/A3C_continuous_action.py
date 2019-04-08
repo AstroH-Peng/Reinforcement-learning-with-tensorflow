@@ -56,6 +56,10 @@ class ACNet(object):
 
                 mu, sigma, self.v, self.a_params, self.c_params = self._build_net(scope)
 
+
+
+                # 接着计算 critic loss 和 actor loss
+                # 用这两个 loss 计算要推送的 gradients
                 td = tf.subtract(self.v_target, self.v, name='TD_error')
                 with tf.name_scope('c_loss'):
                     self.c_loss = tf.reduce_mean(tf.square(td))
@@ -77,14 +81,18 @@ class ACNet(object):
                 with tf.name_scope('local_grad'):
                     self.a_grads = tf.gradients(self.a_loss, self.a_params)
                     self.c_grads = tf.gradients(self.c_loss, self.c_params)
+                
 
-            with tf.name_scope('sync'):
-                with tf.name_scope('pull'):
-                    self.pull_a_params_op = [l_p.assign(g_p) for l_p, g_p in zip(self.a_params, globalAC.a_params)]
-                    self.pull_c_params_op = [l_p.assign(g_p) for l_p, g_p in zip(self.c_params, globalAC.c_params)]
-                with tf.name_scope('push'):
-                    self.update_a_op = OPT_A.apply_gradients(zip(self.a_grads, globalAC.a_params))
-                    self.update_c_op = OPT_C.apply_gradients(zip(self.c_grads, globalAC.c_params))
+
+                with tf.name_scope('sync'):
+                    with tf.name_scope('pull'):
+                        self.pull_a_params_op = [l_p.assign(g_p) for l_p, g_p in zip(self.a_params, globalAC.a_params)]
+                        self.pull_c_params_op = [l_p.assign(g_p) for l_p, g_p in zip(self.c_params, globalAC.c_params)]
+                    with tf.name_scope('push'):
+                        self.update_a_op = OPT_A.apply_gradients(zip(self.a_grads, globalAC.a_params))
+                        self.update_c_op = OPT_C.apply_gradients(zip(self.c_grads, globalAC.c_params))
+
+
 
     def _build_net(self, scope):
         w_init = tf.random_normal_initializer(0., .1)
@@ -205,3 +213,22 @@ if __name__ == "__main__":
     plt.ylabel('Total moving reward')
     plt.show()
 
+
+
+# %%
+env = gym.make(GAME)
+s = env.reset()
+one = workers[0].AC
+one.pull_global()
+while True:
+
+    env.render()
+
+    # Add exploration noise
+    a = one.choose_action(s)
+#    a += np.random.uniform(-0.5,0.5)
+    s_, r, done, info = env.step(a)
+
+    s = s_
+    
+#    print('# control:', a)

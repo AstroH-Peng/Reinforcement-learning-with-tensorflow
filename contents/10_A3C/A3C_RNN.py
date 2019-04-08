@@ -119,6 +119,10 @@ class ACNet(object):
         a, cell_state = SESS.run([self.A, self.final_state], {self.s: s, self.init_state: cell_state})
         return a, cell_state
 
+    def choose_action_only(self, s):  # run by a local
+        s = s[np.newaxis, :]
+        a = SESS.run(self.A, {self.s: s})
+        return a
 
 class Worker(object):
     def __init__(self, name, globalAC):
@@ -136,8 +140,8 @@ class Worker(object):
             rnn_state = SESS.run(self.AC.init_state)    # zero rnn state at beginning
             keep_state = rnn_state.copy()       # keep rnn state for updating global net
             for ep_t in range(MAX_EP_STEP):
-                if self.name == 'W_0':
-                    self.env.render()
+#                if self.name == 'W_0':
+#                    self.env.render()
 
                 a, rnn_state_ = self.AC.choose_action(s, rnn_state)  # get the action and next rnn state
                 s_, r, done, info = self.env.step(a)
@@ -217,10 +221,31 @@ if __name__ == "__main__":
         t = threading.Thread(target=job)
         t.start()
         worker_threads.append(t)
+        print('# current has', len(worker_threads), 'workers...')
+    print('# next step is to join...')
     COORD.join(worker_threads)
+    print('# joined...')
 
     plt.plot(np.arange(len(GLOBAL_RUNNING_R)), GLOBAL_RUNNING_R)
     plt.xlabel('step')
     plt.ylabel('Total moving reward')
     plt.show()
 
+
+# %%
+env = gym.make(GAME)
+s = env.reset()
+one = workers[0].AC
+one.pull_global()
+while True:
+
+    env.render()
+
+    # Add exploration noise
+    a = one.choose_action_only(s)
+#    a += np.random.uniform(-0.5,0.5)
+    s_, r, done, info = env.step(a)
+
+    s = s_
+    
+    print('# control:', a)

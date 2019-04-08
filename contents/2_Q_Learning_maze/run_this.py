@@ -15,9 +15,11 @@ View more on my tutorial page: https://morvanzhou.github.io/tutorials/
 from maze_env import Maze
 from RL_brain import QLearningTable
 
+import time
 
 def update():
-    for episode in range(100):
+    for episode in range(50):
+        print('# episode ', episode, '...')
         # initial observation
         observation = env.reset()
 
@@ -51,3 +53,43 @@ if __name__ == "__main__":
 
     env.after(100, update)
     env.mainloop()
+    
+# %%
+# demonstrate final games until terminate manually
+def end_test():
+    while True:
+        # initial observation
+        observation = env2.reset()
+        
+        step = 0
+        while True:
+            # fresh env
+            env2.render()
+    
+            # RL choose action based on observation
+            action = RL.choose_action(str(observation))
+    
+            # RL take action and get next observation and reward
+            observation_, reward, done = env2.step(action)
+            time.sleep(0.1)
+    
+            # swap observation
+            observation = observation_
+    
+            # break while loop when end of this episode
+            if done:
+                env2.render()
+                if reward == 1:
+                    print('# get oval in', step, 'steps!')
+                elif reward == -1:
+                    print('# die after', step, 'steps...')
+                break
+            
+            step += 1
+        
+        time.sleep(2)
+
+print('# unstopping demonstration starts...')
+env2 = Maze(oval_location=4)
+env2.after(100, end_test)
+env2.mainloop()
